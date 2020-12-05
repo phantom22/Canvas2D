@@ -1,0 +1,17 @@
+body {
+	margin: 0;
+	padding: 0;
+	height: 100vh;
+	width: 100%;
+	overflow: hidden;
+}
+
+#abc {
+	position: absolute;
+	top: 0;
+	left: 0;
+	margin: 0;
+	width: 99.854%;
+	height: 99.695%;
+	border: 1px solid black;
+}
