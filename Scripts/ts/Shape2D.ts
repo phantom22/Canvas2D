@@ -2,7 +2,7 @@ class Shape2D {
 
 	constructor(shape) {
 
-		const t = this/*, supportedShapes = { fillRect: 4, arc: 5 }*/;
+		const t = this;
 
 
 		// property inheritance
@@ -14,7 +14,10 @@ class Shape2D {
 		t.preRender = {
 			image: document.createElement("canvas"),
 			ctx: null,
-			draw: {}
+			draw: {
+				function: null,
+				args: null
+			}
 		};
 
 		// shape.ctx
@@ -79,7 +82,7 @@ class Shape2D {
 
 	get center() {
 		const item = this.belongsTo(),
-			  [x,y] = item.xy;
+			  [x, y] = item.xy;
 
 		return this.df == "arc" && typeof this.cr != "undefined" ? [x + this.cr, y + this.cr] : void 0;
 
@@ -112,6 +115,7 @@ class Shape2D {
 
 		if (t.df == "fillRect") {
 
+			// min width set to 1
 			v = v > 1 ? v : 1;
 
 			t.boxCollider[0] = v;
@@ -137,6 +141,7 @@ class Shape2D {
 
 		if (t.df == "fillRect") {
 
+			// min height set to 1
 			v = v > 1 ? v : 1;
 
 			t.boxCollider[1] = v;
@@ -165,6 +170,7 @@ class Shape2D {
 			const item = t.belongsTo(),
 				  prevCenter = t.center;
 
+			// min radius set to 1
 			v = v > 1 ? v : 1;
 
 			t.circleCollider = v;
@@ -181,7 +187,7 @@ class Shape2D {
 			if (typeof prevCenter != "undefined") item.xy = [prevCenter[0] - t.cr, prevCenter[1] - t.cr];
 
 			// update events hitbox radius
-			item.e.forEach(event => {event.h = v});
+			item.e.forEach(event => event.h = v);
 
 		}
 
@@ -201,7 +207,7 @@ class Shape2D {
 	}
 
 	clearImage() {
-		this.ctx.clearRect(0,0,this.iw,this.ih);
+		this.ctx.clearRect(0, 0, this.iw, this.ih);
 	}
 
 }

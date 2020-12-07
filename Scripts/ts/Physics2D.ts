@@ -1,4 +1,3 @@
-// {enable,acc,gravity,bounce,friction}
 class Physics2D {
 
 	constructor(physics) {

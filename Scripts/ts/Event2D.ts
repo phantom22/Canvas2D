@@ -10,13 +10,11 @@ class Event2D {
 		t.origin = event.origin;
 
 
-		const {type,callback} = event; let {hitbox,assist,offset} = event;
+		const {type, callback} = event; let {hitbox, assist, offset} = event;
 		t.type = type;
 
 		// customizable hitbox
-		if (typeof hitbox == "undefined") {
-			hitbox = t.belongsTo().sc;
-		}
+		if (typeof hitbox == "undefined") hitbox = t.belongsTo().sc;
 
 		t.hitbox = hitbox;
 		t.assist = typeof assist != "number" ? 0 : assist;
@@ -42,39 +40,27 @@ class Event2D {
 	}
 
 	get hw() {
-		if (this.belongsTo().sdf == "fillRect") {
-			return this.hitbox[0];
-		}
+		if (this.belongsTo().sdf == "fillRect") return this.hitbox[0]
 	}
 
 	set hw(v) {
-		if (this.belongsTo().sdf == "fillRect") {
-			this.hitbox[0] = v;
-		}
+		if (this.belongsTo().sdf == "fillRect") this.hitbox[0] = v
 	}
 
 	get hh() {
-		if (this.belongsTo().sdf == "fillRect") {
-			return this.hitbox[1];
-		}
+		if (this.belongsTo().sdf == "fillRect") return this.hitbox[1]
 	}
 
 	set hh(v) {
-		if (this.belongsTo().sdf == "fillRect") {
-			this.hitbox[1] = v;
-		}
+		if (this.belongsTo().sdf == "fillRect") this.hitbox[1] = v
 	}
 
 	get hr() {
-		if (this.belongsTo().sdf == "arc") {
-			return this.hitbox;
-		}
+		if (this.belongsTo().sdf == "arc") return this.hitbox
 	}
 
 	set hr(v) {
-		if (this.belongsTo().sdf == "arc") {
-			this.hitbox = v;
-		}
+		if (this.belongsTo().sdf == "arc") this.hitbox = v
 	}
 
 	get a() {
@@ -109,11 +95,12 @@ class Event2D {
 
 		if (this.belongsTo().sdf == "fillRect") {
 			// triggerBox
-			const [minX,maxX,minY,maxY] = [ ...[-this.a, (this.a + this.hw) ].map(v => v + this.o + item.x), ...[ -this.a, (this.hh + this.a) ].map(v => v + this.o + item.y) ];
+			const [minX, maxX, minY, maxY] = [...[-this.a, (this.a + this.hw)].map(v => v + this.o + item.x), ...[-this.a, (this.hh + this.a)].map(v => v + this.o + item.y)];
 			return minX < mouse[0] && maxX > mouse[0] && minY < mouse[1] && maxY > mouse[1];
 		}
 		else {
 			const center = item.shapeCenter.map(v => v + this.o),
+				  // @ts-ignore
 				  radius = this.hr + this.a;
 
 			return Math.sqrt((mouse[0] - center[0]) ** 2 + (mouse[1] - center[1]) ** 2) <= radius;
@@ -124,15 +111,10 @@ class Event2D {
 
 		const origin = this.origin();
 
-		if (typeof origin.lastEvent != "undefined") {
+		if (typeof origin.lastEvent != "undefined" && this.checkMouse()) {
 
-			// TODO different method for arc
-			if (this.checkMouse()) {
-
-				// Canvas2D, Item2D, Event2D
-				this.c.call(this.origin(),this.belongsTo(),this);
-
-			}
+			// Canvas2D, Item2D, Event2D
+			this.c.call(this.origin(), this.belongsTo(), this);
 
 		}
 

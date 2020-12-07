@@ -1,24 +1,33 @@
 interface HTMLElement {
-	getContext(context: String): Object,
+	getContext(context: string): CanvasRenderingContext2D,
 	height,
 	width
 }
 
+interface CanvasRenderingContext2D {
+	[key: string]: any
+}
+
+interface Event {
+	clientX,
+	clientY
+}
+
 interface Canvas2D {
 	items: Array<Item2D>,
-	events: Object,
-	isPaused: Boolean,
-	lastEvent: lastEvent,
+	events: object,
+	isPaused: boolean,
+	lastEvent: Event,
 	frameCounter: number,
-	canvas: Function,
-	globalEvents,
-	ctx
+	canvas(): HTMLElement,
+	globalEvents: Array<object>,
+	ctx: CanvasRenderingContext2D
 }
 
 interface Physics2D {
 	belongsTo(): Item2D,
 	origin(): Canvas2D,
-	enable: Boolean,
+	enable: boolean,
 	acc: Array<number>,
 	gravity: number,
 	bounce: number,
@@ -30,38 +39,44 @@ interface Shape2D {
 	origin(): Canvas2D,
 	preRender: preRender,
 	boxCollider: Array<number>,
-	circleCollider: number
+	circleCollider: number,
 }
 
 interface Event2D {
 	belongsTo(): Item2D,
 	origin(): Canvas2D,
-	type: String,
-	hitbox: any,
+	type: string,
+	hitbox: number | number[],
 	assist: number,
 	offset: number,
-	callback: Function
+	callback()
 }
 
 interface Item2D {
 	belongsTo(): Canvas2D,
 	origin(): Canvas2D,
-	events: Array<Event2D>,
-	isHidden: Boolean,
-	onFrame: Function,
-	pos: Array<number>,
+
 	shape: Shape2D,
-	physics: Physics2D
+	physics: Physics2D,
+	events: Array<Event2D>,
+
+	pos: Array<number>
+	isHidden: Boolean,
+	onFrame()
+}
+
+interface globalEvent {
+	type: string,
+	callback()
 }
 
 interface preRender {
 	image: HTMLElement,
-	ctx,
-	draw
+	ctx: CanvasRenderingContext2D,
+	draw: preRenderDraw
 }
 
-interface lastEvent {
-	target: HTMLElement,
-	clientX: number,
-	clientY: number
+interface preRenderDraw {
+	function: string,
+	args: Array<number>
 }

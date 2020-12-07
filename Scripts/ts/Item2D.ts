@@ -1,4 +1,5 @@
 class Item2D {
+
 	constructor(item) {
 
 		const t = this, belongsTo = () => this; 
@@ -11,9 +12,7 @@ class Item2D {
 		// forward inheritance to properties
 		item.shape.belongsTo = belongsTo;
 		item.physics.belongsTo = belongsTo;
-		item.events.forEach(event => {
-			event.belongsTo = belongsTo;
-		});
+		item.events.forEach(event => event.belongsTo = belongsTo);
 
 
 		t.events = [];
@@ -42,7 +41,6 @@ class Item2D {
 	}
 
 	set xy(v) {
-		//console.log(v);
 		this.x = v[0];
 		this.y = v[1];
 	}
@@ -202,8 +200,9 @@ class Item2D {
 
 		if (!this.isHidden) {
 				
-			const dimensions = t.sdf == "arc" ? [t.sc * 2, t.sc * 2] : t.sc;
-			this.origin().ctx.drawImage(this.s.i,...this.xy,...dimensions);
+			const dimensions: number[] = t.sdf == "arc" ? [t.sc * 2, t.sc * 2] : t.sc;
+			// @ts-ignore
+			this.origin().ctx.drawImage(this.s.i, ...this.xy, ...dimensions);
 			
 		}
 	}

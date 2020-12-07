@@ -4,7 +4,7 @@ class Canvas2D {
 		this.items = [];
 		this.events = {};
 		this.isPaused = false;
-		this.lastEvent = void 0;
+		this.lastEvent = null;
 		this.checkSettings(settings);
 
 		this.frameCounter = 0;
@@ -15,7 +15,7 @@ class Canvas2D {
 
 		const t = this;
 
-		let {background,items,globalEvents} = settings;
+		let {background, items, globalEvents} = settings;
 		const canvas = document.getElementById(settings.id);
 
 		t.canvas = () => canvas;
@@ -25,24 +25,7 @@ class Canvas2D {
 		t.globalEvents = globalEvents;
 
 		// forward inheritance to children of canvas
-		items.forEach(item => {
-
-			/*item.origin = () => this;
-			item.shape.origin = origin;
-			item.physics.origin = origin;
-			item.events.forEach(event => event.origin = origin);
-			item.belongsTo = () => this;*/
-
-			t.registerNewItem(item);
-
-		});
-
-		/*if (typeof items == "object" && Array.isArray(items)) {
-			items.forEach(item => {
-				t.items.push(new Item2D(item));
-			});
-		}*/
-
+		items.forEach(item => t.registerNewItem(item));
 
 		// TODO BACKGROUND
 
@@ -71,7 +54,7 @@ class Canvas2D {
 
 		// TODO clear current event listeners
 
-		registerEvent = (type,itemIndex) => {
+		registerEvent = (type: string, itemIndex: number) => {
 			if (typeof t.events[type] == "undefined") {
 				t.events[type] = [];
 				t.canvas().addEventListener(type, t.inputHandler.bind(this));
@@ -83,25 +66,24 @@ class Canvas2D {
 		};
 
 		// register canvas events
-		t.globalEvents.forEach(event => {
-			registerEvent(event.type,-1);
+		t.globalEvents.forEach((event: globalEvent) => {
+			registerEvent(event.type, -1);
 		});
 
 		// register item events
-		t.items.forEach((item,itemIndex) => {
-			item.e.forEach(event => {
-				registerEvent(event.type,itemIndex);
+		t.items.forEach((item, itemIndex) => {
+			item.e.forEach((event: Event2D) => {
+				registerEvent(event.type, itemIndex);
 			});
-
 		});
 		
 	}
 
 	clearEvents() {
-		// TODO
+		
 	}
 
-	inputHandler(e) {
+	inputHandler(e: Event) {
 
 		this.lastEvent = e;
 
@@ -111,12 +93,14 @@ class Canvas2D {
 		items.forEach(index => {
 
 			if (index >= 0) {
-				const item = this.i[index];
-				item.filterEvents(type).forEach(event => event.checkIfTriggered());
+				this.items[index]
+					.filterEvents(type)
+					.forEach(event => event.checkIfTriggered())
 			}
 			else {
-				//console.log(this.globalEvents.filter(event => event.type == type))
-				this.globalEvents.filter(event => event.type == type).forEach(event => event.callback.call(this))
+				this.globalEvents
+					.filter((event: globalEvent) => event.type == type)
+					.forEach((event: globalEvent) => event.callback.call(this))
 			}
 
 		});
@@ -130,35 +114,31 @@ class Canvas2D {
 	orderOfExecution() {
 
 		this.adaptFrame();
-
-		if (!this.isPaused) {
-
-			this.itemLogic();
-
-		}
-
+		if (!this.isPaused) this.itemLogic();
 		this.drawFrame();
+		this.frameCounter++;
 
 		requestAnimationFrame(this.orderOfExecution.bind(this));
 
-		this.frameCounter++;
 	}
 
 	adaptFrame() {
-		const c = this.canvas(), iW = window.innerWidth, iH = window.innerHeight;
 
-		if (c.width != iW || c.height != iH) {
-			c.width = iW;
-			c.height = iH;
+		const canvas = this.canvas(),
+			{ innerWidth: windowWidth, innerHeight: windowHeight } = window;
+
+		if (canvas.width != windowWidth || canvas.height != windowHeight) {
+			canvas.width = windowWidth;
+			canvas.height = windowHeight;
 		}
 	}
 
 	itemLogic() {
-		this.items.forEach(item => {item.physicStep(); item.onFrame.call(this,item)});
+		this.items.forEach(item => {item.physicStep(); item.onFrame.call(this, item)});
 	}
 
 	drawFrame() {
-		const {width,height} = this.canvas();
+		const {width, height} = this.canvas();
 		//this.ctx.fillStyle = this.c.bgColor;
 		this.ctx.fillRect(0, 0, width, height);
 		this.items.forEach(v => v.renderToCanvas());
