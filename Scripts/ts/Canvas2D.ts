@@ -130,11 +130,21 @@ class Canvas2D {
 		if (canvas.width != windowWidth || canvas.height != windowHeight) {
 			canvas.width = windowWidth;
 			canvas.height = windowHeight;
+
+			// update each item bounds
+			this.items.forEach(item => item.updateBounds());
 		}
 	}
 
 	itemLogic() {
-		this.items.forEach(item => {item.physicStep(); item.onFrame.call(this, item)});
+
+		this.items.forEach(item => {
+
+			item.physicStep();
+			item.onFrame.call(this, item)
+
+		});
+
 	}
 
 	drawFrame() {
@@ -148,6 +158,8 @@ class Canvas2D {
 	get i() {
 		return this.items;
 	}
+
+
 
 }
 

@@ -40,7 +40,7 @@ class Event2D {
 	}
 
 	get hw() {
-		if (this.belongsTo().sdf == "fillRect") return this.hitbox[0]
+		return this.belongsTo().sdf == "fillRect" ? this.hitbox[0] : void 0;
 	}
 
 	set hw(v) {
@@ -48,7 +48,7 @@ class Event2D {
 	}
 
 	get hh() {
-		if (this.belongsTo().sdf == "fillRect") return this.hitbox[1]
+		return this.belongsTo().sdf == "fillRect" ? this.hitbox[1] : void 0;
 	}
 
 	set hh(v) {
@@ -56,7 +56,7 @@ class Event2D {
 	}
 
 	get hr() {
-		if (this.belongsTo().sdf == "arc") return this.hitbox
+		return this.belongsTo().sdf == "arc" ? this.hitbox : void 0;
 	}
 
 	set hr(v) {
@@ -89,19 +89,23 @@ class Event2D {
 
 	checkMouse() {
 		const origin = this.origin(),
-			  item = this.belongsTo(),
-		      event = origin.lastEvent,
-			  mouse = [event.clientX, event.clientY];
+			item = this.belongsTo(),
+			event = origin.lastEvent,
+			mouse = [event.clientX, event.clientY],
+			{ assist, hw: hitboxWidth, offset, hh: hitboxHeight, hr: hitboxRadius } = this;
 
 		if (this.belongsTo().sdf == "fillRect") {
 			// triggerBox
-			const [minX, maxX, minY, maxY] = [...[-this.a, (this.a + this.hw)].map(v => v + this.o + item.x), ...[-this.a, (this.hh + this.a)].map(v => v + this.o + item.y)];
+			const [minX, maxX, minY, maxY] = [
+				...[ -assist, (hitboxWidth + assist) ].map(v => v + offset + item.x),
+				...[ -assist, (hitboxHeight + assist) ].map(v => v + offset + item.y)
+			];
 			return minX < mouse[0] && maxX > mouse[0] && minY < mouse[1] && maxY > mouse[1];
 		}
 		else {
-			const center = item.shapeCenter.map(v => v + this.o),
+			const center = item.shapeCenter.map(v => v + offset),
 				  // @ts-ignore
-				  radius = this.hr + this.a;
+				  radius = hitboxRadius + assist;
 
 			return Math.sqrt((mouse[0] - center[0]) ** 2 + (mouse[1] - center[1]) ** 2) <= radius;
 		} 
@@ -114,7 +118,7 @@ class Event2D {
 		if (typeof origin.lastEvent != "undefined" && this.checkMouse()) {
 
 			// Canvas2D, Item2D, Event2D
-			this.c.call(this.origin(), this.belongsTo(), this);
+			this.c.call(origin, this.belongsTo(), this);
 
 		}
 

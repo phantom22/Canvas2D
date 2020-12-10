@@ -16,6 +16,7 @@ class Item2D {
 
 
 		t.events = [];
+		t._bounds = { x: null, y: null };
 		t.isHidden = false;
 		t.onFrame = typeof item.onFrame == "function" ? item.onFrame : function(){};
 
@@ -30,7 +31,7 @@ class Item2D {
 		});
 
 		// on item initialization
-		typeof onAwake == "function" ? onAwake.call(t.origin,t) : void 0;
+		typeof onAwake == "function" ? onAwake.call(t.origin, t) : void 0;
 
 	}
 
@@ -205,6 +206,37 @@ class Item2D {
 			this.origin().ctx.drawImage(this.s.i, ...this.xy, ...dimensions);
 			
 		}
+	}
+
+	isInBounds() {
+
+		const inRange = (coord: number, bounds: number[]) => bounds[0] <= coord && coord <= bounds[1];
+
+		return inRange(this.x, this._bounds.x) && inRange(this.y, this._bounds.y);
+
+	}
+
+	updateBounds(flags: BoundFlags) {
+
+		const t = this,
+
+			{ x, y } = typeof flags == "undefined" ? { x: true, y: true } : flags,
+
+			{ width: canvasWidth, height: canvasHeight } = t.origin().canvas(),
+
+			isRect = t.sdf == "fillRect";
+
+		if (x) {
+			const halfWidth = isRect ? t.scw / 2 : t.scr;
+			t._bounds.x = [halfWidth, canvasWidth - halfWidth];
+		}
+
+		if (y) {
+			const halfHeight = isRect ? t.sch / 2 : t.scr;
+			t._bounds.y = [halfHeight, canvasHeight - halfHeight]
+		}
+
+
 	}
 
 }

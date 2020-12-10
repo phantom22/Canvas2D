@@ -82,9 +82,10 @@ class Shape2D {
 
 	get center() {
 		const item = this.belongsTo(),
-			  [x, y] = item.xy;
+			[x, y] = item.xy,
+			colliderRadius = this.cr;
 
-		return this.df == "arc" && typeof this.cr != "undefined" ? [x + this.cr, y + this.cr] : void 0;
+		return this.df == "arc" && typeof this.cr != "undefined" ? [x + colliderRadius, y + colliderRadius] : void 0;
 
 	}
 
@@ -111,7 +112,7 @@ class Shape2D {
 
 	set cw(v) {
 
-		const t = this;
+		const t = this, item = t.belongsTo();
 
 		if (t.df == "fillRect") {
 
@@ -125,7 +126,9 @@ class Shape2D {
 			t.iw = v;
 
 			// update events hitbox width
-			t.belongsTo().e.forEach(event => event.h[0] = v);
+			item.events.forEach(event => event.h[0] = v);
+
+			if (typeof item.s != "undefined") item.updateBounds({ x: true });
 
 		}
 
@@ -137,7 +140,7 @@ class Shape2D {
 
 	set ch(v) {
 
-		const t = this;
+		const t = this, item = t.belongsTo();
 
 		if (t.df == "fillRect") {
 
@@ -151,7 +154,9 @@ class Shape2D {
 			t.ih = v;
 
 			// update events hitbox height
-			t.belongsTo().e.forEach(event => event.h[1] = v);
+			item.events.forEach(event => event.h[1] = v);
+
+			if (typeof item.s != "undefined") item.updateBounds({ y: true });
 
 		}
 
@@ -163,12 +168,11 @@ class Shape2D {
 
 	set cr(v) {
 
-		const t = this;
+		const t = this, item = t.belongsTo();
 
 		if (t.df == "arc") {
 
-			const item = t.belongsTo(),
-				  prevCenter = t.center;
+			const prevCenter = t.center;
 
 			// min radius set to 1
 			v = v > 1 ? v : 1;
@@ -187,7 +191,9 @@ class Shape2D {
 			if (typeof prevCenter != "undefined") item.xy = [prevCenter[0] - t.cr, prevCenter[1] - t.cr];
 
 			// update events hitbox radius
-			item.e.forEach(event => event.h = v);
+			item.events.forEach(event => event.h = v);
+
+			if (typeof item.s != "undefined") item.updateBounds();
 
 		}
 
@@ -209,5 +215,6 @@ class Shape2D {
 	clearImage() {
 		this.ctx.clearRect(0, 0, this.iw, this.ih);
 	}
+
 
 }

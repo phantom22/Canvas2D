@@ -14,13 +14,13 @@ interface Event {
 }
 
 interface Canvas2D {
-	items: Array<Item2D>,
+	items: Item2D[],
 	events: object,
 	isPaused: boolean,
 	lastEvent: Event,
 	frameCounter: number,
 	canvas(): HTMLElement,
-	globalEvents: Array<object>,
+	globalEvents: object[],
 	ctx: CanvasRenderingContext2D
 }
 
@@ -28,7 +28,7 @@ interface Physics2D {
 	belongsTo(): Item2D,
 	origin(): Canvas2D,
 	enable: boolean,
-	acc: Array<number>,
+	acc: number[],
 	gravity: number,
 	bounce: number,
 	friction: number
@@ -38,7 +38,7 @@ interface Shape2D {
 	belongsTo(): Item2D,
 	origin(): Canvas2D,
 	preRender: preRender,
-	boxCollider: Array<number>,
+	boxCollider: number[],
 	circleCollider: number,
 }
 
@@ -58,11 +58,23 @@ interface Item2D {
 
 	shape: Shape2D,
 	physics: Physics2D,
-	events: Array<Event2D>,
+	events: Event2D[],
 
-	pos: Array<number>
+	pos: number[],
 	isHidden: Boolean,
-	onFrame()
+	_bounds: ItemBounds,
+	onFrame(),
+	updateBounds(flags?: BoundFlags)
+}
+
+interface ItemBounds {
+	x: number[],
+	y: number[]
+}
+
+interface BoundFlags {
+	x?: boolean,
+	y?: boolean
 }
 
 interface globalEvent {
@@ -78,5 +90,5 @@ interface preRender {
 
 interface preRenderDraw {
 	function: string,
-	args: Array<number>
+	args: number[]
 }
