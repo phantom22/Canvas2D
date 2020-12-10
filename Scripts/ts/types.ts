@@ -24,34 +24,6 @@ interface Canvas2D {
 	ctx: CanvasRenderingContext2D
 }
 
-interface Physics2D {
-	belongsTo(): Item2D,
-	origin(): Canvas2D,
-	enable: boolean,
-	acc: number[],
-	gravity: number,
-	bounce: number,
-	friction: number
-}
-
-interface Shape2D {
-	belongsTo(): Item2D,
-	origin(): Canvas2D,
-	preRender: preRender,
-	boxCollider: number[],
-	circleCollider: number,
-}
-
-interface Event2D {
-	belongsTo(): Item2D,
-	origin(): Canvas2D,
-	type: string,
-	hitbox: number | number[],
-	assist: number,
-	offset: number,
-	callback()
-}
-
 interface Item2D {
 	belongsTo(): Canvas2D,
 	origin(): Canvas2D,
@@ -64,7 +36,8 @@ interface Item2D {
 	isHidden: Boolean,
 	_bounds: ItemBounds,
 	onFrame(),
-	updateBounds(flags?: BoundFlags)
+	updateBounds(flags?: BoundFlags),
+	isInBounds(): boolean
 }
 
 interface ItemBounds {
@@ -82,6 +55,14 @@ interface globalEvent {
 	callback()
 }
 
+interface Shape2D {
+	belongsTo(): Item2D,
+	origin(): Canvas2D,
+	preRender: preRender,
+	boxCollider: number[],
+	circleCollider: number,
+}
+
 interface preRender {
 	image: HTMLElement,
 	ctx: CanvasRenderingContext2D,
@@ -91,4 +72,24 @@ interface preRender {
 interface preRenderDraw {
 	function: string,
 	args: number[]
+}
+
+interface Physics2D {
+	belongsTo(): Item2D,
+	origin(): Canvas2D,
+	enable: boolean,
+	acc: number[],
+	gravity: number,
+	bounce: number,
+	friction: number
+}
+
+interface Event2D {
+	belongsTo(): Item2D,
+	origin(): Canvas2D,
+	type: string,
+	hitbox: number | number[],
+	assist: number,
+	offset: number,
+	callback()
 }

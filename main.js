@@ -17,7 +17,7 @@ const C = new Canvas2D({
 			events: [
 				{type:"mousedown", assist: 15, callback(i,e){i.open = true}}
 			],
-			// on every tenth frame
+
 			onFrame(i) {if (i.open) {i.scr = i.scr + 15 > 100 ? 100 : i.scr + 15} else {i.scr = i.scr - 30 < 50 ? 50 : i.scr - 30}},
 			onAwake(i) {console.log("on awake")}
 		} 
