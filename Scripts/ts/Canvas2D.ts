@@ -4,6 +4,7 @@ class Canvas2D {
 		this.items = [];
 		this.events = {};
 		this.isPaused = false;
+		this._hidePointer = false;
 		this.lastEvent = null;
 		this.checkSettings(settings);
 
@@ -95,7 +96,7 @@ class Canvas2D {
 			if (index >= 0) {
 				this.items[index]
 					.filterEvents(type)
-					.forEach(event => event.checkIfTriggered())
+					.forEach(event => event.fireIfTriggered())
 			}
 			else {
 				this.globalEvents
@@ -141,7 +142,7 @@ class Canvas2D {
 		this.items.forEach(item => {
 
 			item.physicStep();
-			item.onFrame.call(this, item)
+			item.onFrame.call(this, item);
 
 		});
 
@@ -158,6 +159,14 @@ class Canvas2D {
 	get i() {
 		return this.items;
 	}
+
+	togglePointer() {
+		const canvas = this.canvas();
+		this._hidePointer = this._hidePointer == false ? true : false;
+
+		if (this._hidePointer) canvas.style.cursor = "none";
+		else canvas.style.cursor = "";
+    }
 
 
 

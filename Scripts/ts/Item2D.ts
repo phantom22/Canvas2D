@@ -208,32 +208,42 @@ class Item2D {
 		}
 	}
 
-	isInBounds() {
+	keepInBounds() {
 
-		const inRange = (coord: number, bounds: number[]) => bounds[0] <= coord && coord <= bounds[1];
+		// 0 and 1 stands for the bounds.<axis>[index] where -1 means that the item position is in bounds
+		const inRange = (coord: number, bounds: number[]) => (bounds[0] > coord) ? 0 : (coord > bounds[1]) ? 1 : -1;
 
-		return inRange(this.x, this._bounds.x) && inRange(this.y, this._bounds.y);
+		const stateX = inRange(this.x, this._bounds.x),
+			  stateY = inRange(this.y, this._bounds.y);
 
-	}
+		if (stateX > -1) {
+			this.x = this._bounds.x[stateX];
+			this.physics.hBounce();
+		}
+		if (stateY > -1) {
+			this.y = this._bounds.y[stateY];
+			this.physics.vBounce()
+		}
+
+		return stateX + stateY == -2;
+
+    }
 
 	updateBounds(flags: BoundFlags) {
 
 		const t = this,
-
 			{ x, y } = typeof flags == "undefined" ? { x: true, y: true } : flags,
-
 			{ width: canvasWidth, height: canvasHeight } = t.origin().canvas(),
-
 			isRect = t.sdf == "fillRect";
 
 		if (x) {
-			const halfWidth = isRect ? t.scw / 2 : t.scr;
-			t._bounds.x = [halfWidth, canvasWidth - halfWidth];
+			const itemWidth = isRect ? t.scw : t.scr * 2;
+			t._bounds.x = [0, canvasWidth - itemWidth];
 		}
 
 		if (y) {
-			const halfHeight = isRect ? t.sch / 2 : t.scr;
-			t._bounds.y = [halfHeight, canvasHeight - halfHeight]
+			const itemHeight = isRect ? t.sch / 2 : t.scr * 2;
+			t._bounds.y = [0, canvasHeight - itemHeight]
 		}
 
 

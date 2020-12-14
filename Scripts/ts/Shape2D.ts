@@ -184,8 +184,8 @@ class Shape2D {
 			t.da[1] = v + 0.5;
 			t.da[2] = v;
 			// update pre-render canvas dimensions
-			t.iw = v * 2 + 1.6;
-			t.ih = v * 2 + 1.6;
+			t.iw = v * 2 + 1.2;
+			t.ih = v * 2 + 1.2;
 
 			// preserve circle center after resizing
 			if (typeof prevCenter != "undefined") item.xy = [prevCenter[0] - t.cr, prevCenter[1] - t.cr];

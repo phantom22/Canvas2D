@@ -111,7 +111,7 @@ class Event2D {
 		} 
 	}
 
-	checkIfTriggered() {
+	fireIfTriggered() {
 
 		const origin = this.origin();
 

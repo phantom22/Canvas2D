@@ -21,7 +21,8 @@ interface Canvas2D {
 	frameCounter: number,
 	canvas(): HTMLElement,
 	globalEvents: object[],
-	ctx: CanvasRenderingContext2D
+	ctx: CanvasRenderingContext2D,
+	_hidePointer: boolean
 }
 
 interface Item2D {
@@ -33,11 +34,12 @@ interface Item2D {
 	events: Event2D[],
 
 	pos: number[],
-	isHidden: Boolean,
+	isHidden: boolean,
 	_bounds: ItemBounds,
 	onFrame(),
 	updateBounds(flags?: BoundFlags),
-	isInBounds(): boolean
+
+	keepInBounds(): boolean
 }
 
 interface ItemBounds {
@@ -77,11 +79,16 @@ interface preRenderDraw {
 interface Physics2D {
 	belongsTo(): Item2D,
 	origin(): Canvas2D,
+
+	onCollision(),
+	step(),
+
 	enable: boolean,
 	acc: number[],
 	gravity: number,
 	bounce: number,
-	friction: number
+	friction: number,
+	_maxAcc: number
 }
 
 interface Event2D {
@@ -91,5 +98,6 @@ interface Event2D {
 	hitbox: number | number[],
 	assist: number,
 	offset: number,
-	callback()
+	callback(),
+	fireIfTriggered()
 }

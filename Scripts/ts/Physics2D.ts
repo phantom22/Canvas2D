@@ -10,13 +10,16 @@ class Physics2D {
 		t.origin = physics.origin;
 
 
-		let {enable,acc,gravity,bounce,friction} = physics;
+		let {enable,acc,gravity,bounce,friction,onCollision} = physics;
 
 		t.enable = typeof enable == "undefined" ? false : enable;
 		t.acc = typeof acc == "undefined" ? [0,0] : acc;
 		t.gravity = typeof gravity == "undefined" ? 9.82 : gravity;
 		t.bounce = typeof bounce == "undefined" ? 0 : bounce;
 		t.friction = typeof friction == "undefined" ? 0 : friction;
+		t.onCollision = typeof onCollision == "function" ? onCollision : function(){};
+
+		t._maxAcc = 3800;
 
 	}
 
@@ -41,7 +44,8 @@ class Physics2D {
 	}
 
 	set ax(v) {
-		this.acc[0] = v;
+		// acceleration cap based on this._maxAcc
+		this.acc[0] = Math.abs(v) <= this._maxAcc ? v : this._maxAcc * Math.sign(v);
 	}
 
 	get ay() {
@@ -49,7 +53,8 @@ class Physics2D {
 	}
 
 	set ay(v) {
-		this.acc[1] = v;
+		// acceleration cap based on this._maxAcc
+		this.acc[1] = Math.abs(v) <= this._maxAcc ? v : this._maxAcc * Math.sign(v);
 	}
 
 	get g() {
@@ -91,16 +96,27 @@ class Physics2D {
 	step() {
 
 		const t = this,
-			  item = t.belongsTo(),
-		      step = 1 / 60;
+			item = t.belongsTo(),
+			deltaTime = 1 / 60;
+		let { y, x } = item,
+			{ ay: accelerationY, ax: accelerationX, friction, gravity } = t;
 
-		if (t.e) {
-			item.y += t.ay + t.g * step;
-			t.ay += t.g * step;
-			item.x += t.ax;
-			t.ax *= (1 - t.f);
+		if (t.enable) {
+			x             += accelerationX * deltaTime;
+			accelerationX *= (1 - friction);
+			y             += accelerationY * deltaTime + gravity * deltaTime;
+			accelerationY += gravity * deltaTime;
 		}
 
+		if (item.keepInBounds()) {
+			item.x = x;
+			t.ax   = accelerationX;
+			item.y = y;
+			t.ay   = accelerationY;
+		}
+		else {
+			t.onCollision.call(t.origin(), item, this);
+        }
 	}
 	
 }

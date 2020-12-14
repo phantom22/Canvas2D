@@ -2,6 +2,7 @@
 	"compilerOptions": {
 		"target": "esnext",
 		"lib": ["dom", "es2017"],
-		"outFile": "../js/Canvas2D.js"
+		"watch": true,
+		"outFile": "../../../test-js/Canvas2D.js"
 	}
 }
