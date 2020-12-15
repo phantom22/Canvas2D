@@ -18,6 +18,7 @@ class Item2D {
 		t.events = [];
 		t._bounds = { x: null, y: null };
 		t.isHidden = false;
+		t._lastCollide = [-1, -1];
 		t.onFrame = typeof item.onFrame == "function" ? item.onFrame : function(){};
 
 		const {shape,physics,events,onAwake} = item;
@@ -51,7 +52,8 @@ class Item2D {
 	}
 
 	set x(v) {
-		this.pos[0] = v;
+		const [minX, maxX] = this._bounds.x;
+		this.pos[0] = (v < minX) ? minX : (v > maxX) ? maxX : v;
 	}
 
 	get y() {
@@ -59,7 +61,8 @@ class Item2D {
 	}
 
 	set y(v) {
-		this.pos[1] = v;
+		const [minY, maxY] = this._bounds.y;
+		this.pos[1] = (v < minY) ? minY : (v > maxY) ? maxY : v;
 	}
 
 	// END POS
@@ -208,24 +211,23 @@ class Item2D {
 		}
 	}
 
-	keepInBounds() {
+	isTouchingBounds() {
+
+		const [x, y] = this.xy.map(v => Math.floor(v));
 
 		// 0 and 1 stands for the bounds.<axis>[index] where -1 means that the item position is in bounds
 		const inRange = (coord: number, bounds: number[]) => (bounds[0] > coord) ? 0 : (coord > bounds[1]) ? 1 : -1;
 
-		const stateX = inRange(this.x, this._bounds.x),
-			  stateY = inRange(this.y, this._bounds.y);
+		const stateX = this._bounds.x.includes(x),
+			  stateY = this._bounds.y.includes(y),
+			  canCollide = stateX && this._lastCollide[0] != x || stateY && this._lastCollide[1] != y;
 
-		if (stateX > -1) {
-			this.x = this._bounds.x[stateX];
-			this.physics.hBounce();
-		}
-		if (stateY > -1) {
-			this.y = this._bounds.y[stateY];
-			this.physics.vBounce()
-		}
+		if (stateX) this.physics.hBounce();
+		if (stateY) this.physics.vBounce();
+		if (canCollide) this._lastCollide = this.xy;
+		else if (!stateX && !stateY) this._lastCollide = [-1, -1];
 
-		return stateX + stateY == -2;
+		return canCollide;
 
     }
 

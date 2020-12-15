@@ -38,8 +38,9 @@ interface Item2D {
 	_bounds: ItemBounds,
 	onFrame(),
 	updateBounds(flags?: BoundFlags),
+	_lastCollide: number[],
 
-	keepInBounds(): boolean
+	isTouchingBounds(pos: number[]): boolean
 }
 
 interface ItemBounds {

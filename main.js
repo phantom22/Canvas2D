@@ -13,7 +13,7 @@ const C = new Canvas2D({
 		{
 			shape: {function:"arc", args:[50,50,50,0,Math.PI*2]},
 			/*colors: {fill,stroke}*/
-			physics: {enable:true, acc:[2500,130], gravity:15, friction:0.003, bounce:1, onCollision:function(i){/*i.open = i.open == true ? false : true*/} },
+			physics: {enable:true, acc:[2500,130], gravity:15, friction:0.003, bounce:1, onCollision:function(i){console.log("collision with borders")} },
 			events: [
 				{type:"mousedown", assist: 15, callback(i,e){i.open = true;  i.pa = [0,0]; this.togglePointer()}},
 				{type:"mousemove", callback(){/*needed to update lastEvent mouse position*/}}

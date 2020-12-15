@@ -102,21 +102,14 @@ class Physics2D {
 			{ ay: accelerationY, ax: accelerationX, friction, gravity } = t;
 
 		if (t.enable) {
-			x             += accelerationX * deltaTime;
-			accelerationX *= (1 - friction);
-			y             += accelerationY * deltaTime + gravity * deltaTime;
-			accelerationY += gravity * deltaTime;
+			item.x += accelerationX * deltaTime;
+			item.y += accelerationY * deltaTime + gravity * deltaTime;
+			t.ax   *= (1 - friction);
+			t.ay   += gravity * deltaTime;
 		}
 
-		if (item.keepInBounds()) {
-			item.x = x;
-			t.ax   = accelerationX;
-			item.y = y;
-			t.ay   = accelerationY;
-		}
-		else {
-			t.onCollision.call(t.origin(), item, this);
-        }
+		if (item.isTouchingBounds()) t.onCollision.call(t.origin(), item, this);
+        
 	}
 	
 }
