@@ -1,23 +1,23 @@
 class Canvas2D {
 
-	constructor(settings) {
+	constructor(settings: Canvas2DSettings) {
+
 		this.items = [];
 		this.events = {};
 		this.isPaused = false;
-		this._hidePointer = false;
 		this.lastEvent = null;
 		this.checkSettings(settings);
 
 		this.frameCounter = 0;
 		this.startExecution();
+
 	}
 
-	checkSettings(settings) {
+	checkSettings({ id, background, items, globalEvents }): void {
 
 		const t = this;
 
-		let {background, items, globalEvents} = settings;
-		const canvas = document.getElementById(settings.id);
+		const canvas = document.getElementById(id);
 
 		t.canvas = () => canvas;
 		const context = canvas.getContext("2d");
@@ -35,7 +35,7 @@ class Canvas2D {
 
 	}
 
-	registerNewItem(item) {
+	registerNewItem(item: Item2D): void {
 
 		const origin = () => this
 
@@ -49,7 +49,7 @@ class Canvas2D {
 
 	}
 
-	registerNewEvents() {
+	registerNewEvents(): void {
 
 		const t = this,
 
@@ -84,7 +84,7 @@ class Canvas2D {
 		
 	}
 
-	inputHandler(e: Event) {
+	inputHandler(e: Event): void {
 
 		this.lastEvent = e;
 
@@ -108,11 +108,11 @@ class Canvas2D {
 
 	}
 
-	startExecution() {
+	startExecution(): void {
 		this.orderOfExecution();
 	}
 
-	orderOfExecution() {
+	orderOfExecution(): void {
 
 		this.adaptFrame();
 		if (!this.isPaused) this.itemLogic();
@@ -123,7 +123,7 @@ class Canvas2D {
 
 	}
 
-	adaptFrame() {
+	adaptFrame(): void {
 
 		const canvas = this.canvas(),
 			{ innerWidth: windowWidth, innerHeight: windowHeight } = window;
@@ -137,7 +137,7 @@ class Canvas2D {
 		}
 	}
 
-	itemLogic() {
+	itemLogic(): void {
 
 		this.items.forEach(item => {
 
@@ -148,7 +148,7 @@ class Canvas2D {
 
 	}
 
-	drawFrame() {
+	drawFrame(): void {
 		const {width, height} = this.canvas();
 		//this.ctx.fillStyle = this.c.bgColor;
 		this.ctx.fillRect(0, 0, width, height);
@@ -160,12 +160,12 @@ class Canvas2D {
 		return this.items;
 	}
 
-	togglePointer() {
-		const canvas = this.canvas();
-		this._hidePointer = this._hidePointer == false ? true : false;
+	showMouse(): void {
+		this.canvas().style.cursor = "";
+	}
 
-		if (this._hidePointer) canvas.style.cursor = "none";
-		else canvas.style.cursor = "";
+	hideMouse(): void {
+		this.canvas().style.cursor = "none";
     }
 
 

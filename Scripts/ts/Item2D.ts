@@ -1,29 +1,25 @@
 class Item2D {
 
-	constructor(item) {
+	constructor({ belongsTo, origin, shape, physics, events, onAwake = function(){}, onFrame = function(){} }) {
 
-		const t = this, belongsTo = () => this; 
+		const t = this, forwardBelongsTo = () => this; 
 
 
 		// item inheritance
-		t.belongsTo = item.belongsTo;
-		t.origin = item.origin;
+		t.belongsTo = belongsTo;
+		t.origin = origin;
 
 		// forward inheritance to properties
-		item.shape.belongsTo = belongsTo;
-		item.physics.belongsTo = belongsTo;
-		item.events.forEach(event => event.belongsTo = belongsTo);
+		shape.belongsTo = forwardBelongsTo;
+		physics.belongsTo = forwardBelongsTo;
+		events.forEach(event => event.belongsTo = forwardBelongsTo);
 
 
 		t.events = [];
-		t._bounds = { x: null, y: null };
-		t.isHidden = false;
-		t._lastCollide = [-1, -1];
-		t.onFrame = typeof item.onFrame == "function" ? item.onFrame : function(){};
+		t.onFrame = onFrame;
+		t.onAwake = onAwake;
 
-		const {shape,physics,events,onAwake} = item;
-
-		t.pos = item.shape.args.slice(0,2);
+		t.pos = shape.args.slice(0,2);
 		t.shape = new Shape2D(shape);
 		t.physics = new Physics2D(physics);
 
@@ -31,8 +27,13 @@ class Item2D {
 			t.events.push(new Event2D(event));
 		});
 
+		t.isHidden = false;
+		t._bounds = { x: null, y: null };
+		t._lastCollide = [-1, -1];
+
+
 		// on item initialization
-		typeof onAwake == "function" ? onAwake.call(t.origin, t) : void 0;
+		t.onAwake.call(t.origin, t);
 
 	}
 
@@ -192,13 +193,13 @@ class Item2D {
 		return this.events;
 	}
 
-	filterEvents(type) {
+	filterEvents(type: string): Event2D[] {
 		return this.e.filter(v => v.t == type);
 	}
 
 	// END OF EVENT
 
-	renderToCanvas() {
+	renderToCanvas(): void {
 
 		const t = this;
 
@@ -211,27 +212,7 @@ class Item2D {
 		}
 	}
 
-	isTouchingBounds() {
-
-		const [x, y] = this.xy.map(v => Math.floor(v));
-
-		// 0 and 1 stands for the bounds.<axis>[index] where -1 means that the item position is in bounds
-		const inRange = (coord: number, bounds: number[]) => (bounds[0] > coord) ? 0 : (coord > bounds[1]) ? 1 : -1;
-
-		const stateX = this._bounds.x.includes(x),
-			  stateY = this._bounds.y.includes(y),
-			  canCollide = stateX && this._lastCollide[0] != x || stateY && this._lastCollide[1] != y;
-
-		if (stateX) this.physics.hBounce();
-		if (stateY) this.physics.vBounce();
-		if (canCollide) this._lastCollide = this.xy;
-		else if (!stateX && !stateY) this._lastCollide = [-1, -1];
-
-		return canCollide;
-
-    }
-
-	updateBounds(flags: BoundFlags) {
+	updateBounds(flags: BoundFlags): void {
 
 		const t = this,
 			{ x, y } = typeof flags == "undefined" ? { x: true, y: true } : flags,
@@ -250,5 +231,23 @@ class Item2D {
 
 
 	}
+
+	isTouchingBounds(): boolean {
+
+		const [x, y] = this.xy.map(v => Math.floor(v));
+
+		const stateX = this._bounds.x.includes(x),
+			  stateY = this._bounds.y.includes(y),
+			  canCollide = stateX && this._lastCollide[0] != x || stateY && this._lastCollide[1] != y;
+
+		if (stateX) this.physics.hBounce();
+		if (stateY) this.physics.vBounce();
+
+		if (canCollide) this._lastCollide = [x, y];
+		else if (!stateX && !stateY) this._lastCollide = [-1, -1];
+
+		return canCollide;
+
+    }
 
 }

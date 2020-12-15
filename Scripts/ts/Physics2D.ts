@@ -1,24 +1,22 @@
 class Physics2D {
 
-	constructor(physics) {
+	constructor({ belongsTo, origin, enable = false, acc = [0, 0], gravity = 9.82, bounce = 0, friction = 0, onCollision = function(){} }) {
 
 		const t = this;
 
 
 		// property inheritance
-		t.belongsTo = physics.belongsTo;
-		t.origin = physics.origin;
+		t.belongsTo = belongsTo;
+		t.origin = origin;
 
+		t.enable = enable;
+		t.acc = acc;
+		t.gravity = gravity;
+		t.bounce = bounce;
+		t.friction = friction;
+		t.onCollision = onCollision;
 
-		let {enable,acc,gravity,bounce,friction,onCollision} = physics;
-
-		t.enable = typeof enable == "undefined" ? false : enable;
-		t.acc = typeof acc == "undefined" ? [0,0] : acc;
-		t.gravity = typeof gravity == "undefined" ? 9.82 : gravity;
-		t.bounce = typeof bounce == "undefined" ? 0 : bounce;
-		t.friction = typeof friction == "undefined" ? 0 : friction;
-		t.onCollision = typeof onCollision == "function" ? onCollision : function(){};
-
+		// for now can only be changed during runtime
 		t._maxAcc = 3800;
 
 	}
@@ -81,19 +79,19 @@ class Physics2D {
 		this.friction = v;
 	}
 
-	hBounce() {
+	hBounce(): void {
 		this.ax *= this.b * -1;
 	}
 
-	vBounce() {
+	vBounce(): void {
 		this.ay *= this.b * -1;
 	}
 
-	reverseGravity() {
-		this.g *= -1;
+	reverseGravity(): void {
+		this.g *= -1; 
 	}
 
-	step() {
+	step(): void {
 
 		const t = this,
 			item = t.belongsTo(),

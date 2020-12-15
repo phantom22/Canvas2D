@@ -1,15 +1,13 @@
 class Shape2D {
 
-	constructor(shape) {
+	constructor({ belongsTo, origin, function: func, args }) {
 
 		const t = this;
 
 
 		// property inheritance
-		t.belongsTo = shape.belongsTo;
-		t.origin = shape.origin;
-
-		let args = shape.args;
+		t.belongsTo = belongsTo;
+		t.origin = origin;
 
 		t.preRender = {
 			image: document.createElement("canvas"),
@@ -22,7 +20,7 @@ class Shape2D {
 
 		// shape.ctx
 		t.preRender.ctx = t.i.getContext("2d");
-		t.preRender.draw.function = shape.function;
+		t.preRender.draw.function = func;
 
 		// normalizing draw args to pre render the image in a separate canvas
 		t.preRender.draw.args = t.df == "fillRect" ? [0, 0, ...args.slice(2)] : [args[2], args[2], ...args.slice(2)];
@@ -199,7 +197,7 @@ class Shape2D {
 
 	}
 
-	render() {
+	render(): void {
 
 		this.clearImage();
 		const ctx = this.ctx;
@@ -212,7 +210,7 @@ class Shape2D {
 		
 	}
 
-	clearImage() {
+	clearImage(): void {
 		this.ctx.clearRect(0, 0, this.iw, this.ih);
 	}
 

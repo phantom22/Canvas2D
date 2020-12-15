@@ -2,10 +2,11 @@ alert("this is a simple visualization of the project!");
 
 const C = new Canvas2D({
 
-	id:"abc",
+	id:"canvas",
 	background:"white",
 	globalEvents: [
-		{type:"mouseup",callback(){this.i.filter(item => item.open).forEach(item => item.open = false); this.togglePointer()}}
+		{type:"mousedown",callback(){this.hideMouse()}},
+		{type:"mouseup",callback(){this.i.filter(item => item.open).forEach(item => item.open = false);this.showMouse()}}
 	],
 
 	items:[
@@ -15,7 +16,7 @@ const C = new Canvas2D({
 			/*colors: {fill,stroke}*/
 			physics: {enable:true, acc:[2500,130], gravity:15, friction:0.003, bounce:1, onCollision:function(i){console.log("collision with borders")} },
 			events: [
-				{type:"mousedown", assist: 15, callback(i,e){i.open = true;  i.pa = [0,0]; this.togglePointer()}},
+				{type:"mousedown", assist: 15, callback(i,e){i.open = true;  i.pa = [0,0];}},
 				{type:"mousemove", callback(){/*needed to update lastEvent mouse position*/}}
 			],
 

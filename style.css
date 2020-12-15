@@ -6,12 +6,12 @@ body {
 	overflow: hidden;
 }
 
-#abc {
+#canvas {
 	position: absolute;
 	top: 0;
 	left: 0;
 	margin: 0;
-	width: 99.854%;
-	height: 99.695%;
+	width: 99.9%;
+	height: 99.9%;
 	border: 1px solid black;
 }

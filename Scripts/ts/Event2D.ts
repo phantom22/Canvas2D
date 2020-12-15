@@ -1,24 +1,24 @@
 class Event2D {
 
-	constructor(event) {
+	constructor({ belongsTo, origin, type, hitbox, assist = 0, offset = 0, callback = function(){} }) {
 
-		const t = this/*, supportedEvents = ["mousedown","mouseup","dblclick","mousemove"], itemIndex = event.itemIndex*/;
+		const t = this;
 
 
 		// property inheritance
-		t.belongsTo =  event.belongsTo;
-		t.origin = event.origin;
+		t.belongsTo =  belongsTo;
+		t.origin = origin;
 
 
-		const {type, callback} = event; let {hitbox, assist, offset} = event;
 		t.type = type;
 
 		// customizable hitbox
+		// TODO add flag that specifies if hitbox is custom, to ignore resize events
 		if (typeof hitbox == "undefined") hitbox = t.belongsTo().sc;
 
 		t.hitbox = hitbox;
-		t.assist = typeof assist != "number" ? 0 : assist;
-		t.offset = typeof offset != "number" ? 0 : offset;
+		t.assist = assist;
+		t.offset = offset;
 		t.callback = callback;
 
 	}
@@ -87,7 +87,7 @@ class Event2D {
 		this.offset = v;
 	}
 
-	checkMouse() {
+	checkMouse(): boolean {
 		const origin = this.origin(),
 			item = this.belongsTo(),
 			event = origin.lastEvent,
